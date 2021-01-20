@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/public/layui/css/layui.css">
+</head>
+<body>
+      <!-- 引入左边侧边栏 -->
+   {{ include './common/header.html' }}
+   <div class="layui-body">
+      
+    <!-- 内容主体区域 -->
+   
+    <div style="padding-top: 50px;">
+       
+        <table class="layui-table" lay-size="sm">
+            <colgroup>
+              <col width="150">
+              <col width="200">
+              <col>
+            </colgroup>
+            <thead>
+              <tr>
+                <th>昵称</th>
+                <th>加入时间</th>
+                <th>签名</th>
+              </tr> 
+            </thead>
+            <tbody>
+              <tr>
+                <td>贤心</td>
+                <td>2016-11-29</td>
+                <td>人生就像是一场修行</td>
+              </tr>
+              <tr>
+                <td>许闲心</td>
+                <td>2016-11-28</td>
+                <td>于千万人之中遇见你所遇见的人，于千万年之中，时间的无涯的荒野里…</td>
+              </tr>
+              <tr>
+                <td>sentsin</td>
+                <td>2016-11-27</td>
+                <td> Life is either a daring adventure or nothing.</td>
+              </tr>
+            </tbody>
+          </table>
+    </div>
+  </div>
+    {{ include './common/slide.html' }}
+    {{ include './common/footer.html' }}
+  
+</body>
+<script src="/public/layui/layui.js"></script>
+<script>
+//Demo
+layui.use('form', function(){
+  var form = layui.form;
+  
+  //监听提交
+  form.on('submit(formDemo)', function(data){
+    layer.msg(JSON.stringify(data.field));
+    return false;
+  });
+});
+</script>
+</html>

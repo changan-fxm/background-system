@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>layout 后台大布局 - Layui</title>
+  <link rel="stylesheet" href="/public/layui/css/layui.css">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+  
+  
+   <!-- 引入左边侧边栏 -->
+   {{ include './common/header.html' }}
+  {{ include './common/slide.html' }}
+  
+  <div class="layui-body">
+    <!-- 内容主体区域 -->
+    <div style="padding: 15px;">
+        <form class="layui-form" action="">
+           <!-- <input type="hidden" name="cat_id" value=''> -->
+            <div class="layui-form-item">
+              <label class="layui-form-label">分类名称：</label>
+              <div class="layui-input-inline">
+                <input type="text" name="name" lay-verify="required" placeholder="分类名称" autocomplete="off" class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">排序：</label>
+                <div class="layui-input-inline">
+                  <input type="number" name="sort"  required  lay-verify="number"  autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">添加时间：</label>
+                <div class="layui-input-inline">
+                  <input type="text"  id="add_date"  name="add_date" required  lay-verify="required"  autocomplete="off" class="layui-input">
+                </div>
+            </div>
+                        
+           
+            <div class="layui-form-item">
+              <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formDemo">编辑</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+              </div>
+            </div>
+        </form>
+    </div>
+  </div>
+  
+    <!-- 引入左边侧边栏 -->
+    {{ include './common/footer.html' }}
+  
+</div>
+<script src=""></script>
+<script src="/public/layui/layui.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+<script src="/public/js/moment.js"></script>
+
+<script>
+// 获取cat_id的参数
+let url = location.href;
+let reg = /cat_id=(.*)&?/;
+// 只要get
+let [,cat_id] = [...reg.exec(url)]
+$.ajax({
+  url:'/getOneCate?cat_id='+cat_id
+}).then((res)=>{
+  let {errcode,name,sort,add_date,cat_id} = res;
+   //设置时间的格式 
+  add_date = moment(add_date).format('YYYY-MM-DD HH:mm:ss')
+  if(errcode == 0){
+    $('input[name="name"]').val(name)
+    $('input[name = "sort"]').val(sort);
+    $('input[name = "add_date"]').val(add_date)
+  }
+})
+
+ layui.use(['element','form','layer','laydate'],function(){
+   var element = layui.element;
+   var form = layui.form;
+   var layer = layui.layer;
+   var laydate = layui.laydate;
+  //  表单监听
+  form.on('submit(formDemo)',function(data){
+    // 设置禁用按钮，防止重复点击
+    d = {
+      ...data.field,
+      cat_id
+    }
+    console.log(data);
+    
+    let oldText = data.elem.innerText;
+    $(data.elem).addClass('layui-btn-disabled').text('编辑中..')
+    // 把数据编辑入库
+    $.ajax({ 
+      type:'post',
+      url:'/update',
+      data:d
+    }).then(res=>{
+      // 添加成功后移除禁用按钮
+      $(data.elem).removeClass('layui-btn-disabled').text(oldText)
+      let {errcode,message} = res;
+      if(errcode == 0){
+        lay.msg(message)
+        location.href = '/catindex'
+      }else{
+        layer.msg(message)
+      }
+    })
+    return false;
+
+  })
+  //时间初始化
+  laydate.render({
+    elem:'#add_date',
+    type:'datetime'
+  })
+ })
+ 
+  
+
+
+
+</script>
+</body>
+</html>
