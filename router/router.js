@@ -3,6 +3,7 @@ const express = require("express");
 let router = express.Router();
 
 const catecontroller = require('../controller/catecontroller.js')
+const articleController = require('../controller/articleController.js')
 
 router.get('/',(req,res)=>{
     res.render('back-stage.html')
@@ -40,5 +41,11 @@ router.post('/addData',catecontroller.addData)
 router.get('/catadd',catecontroller.catadd)
 // 渲染编辑分类的页面
 router.get('/editdata',catecontroller.editdata)
+
+
+
+
+// 获取文章数据请求
+router.get('/getallData',articleController.getAllData)
 
 module.exports = router;
