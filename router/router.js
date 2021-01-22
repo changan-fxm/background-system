@@ -47,5 +47,12 @@ router.get('/editdata',catecontroller.editdata)
 
 // 获取文章数据请求
 router.get('/getallData',articleController.getAllData)
+// 删除文章
+router.post('/deleteArticle',articleController.deleteArticle)
+// 编辑文章
+router.get("/artedit",articleController.artedit)
+//添加文章
+router.get("/addarticle",articleController.addarticle)
+router.post("/postArticle",articleController.postArticle)
 
 module.exports = router;

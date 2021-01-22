@@ -14,9 +14,13 @@
     <!-- 内容主体区域 -->
    
     <div style="padding-top: 50px;">
+      <button type="button" id="add"  class="layui-btn"  >
+        <i class="layui-icon">&#xe608;</i> 添加分类
+      </button>
        
       <table class="layui-hide" id="test" lay-filter="test"></table>
       <script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-xs" lay-event="check">查看</a>
         <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
       </script>
@@ -29,13 +33,16 @@
   
 </body>
 <script src="/public/layui/layui.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+<script src="/public/js/moment.js"></script>
+<script src="/public/js/util.js"></script>
 <script>
 //Demo
 layui.use(['element','table'],function(){
   var element = layui.element;
   var table = layui.table;
   
-  table.render({
+ table.render({
     elem: '#test'
     ,url:'/getallData'
     ,toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
@@ -47,12 +54,12 @@ layui.use(['element','table'],function(){
     ,title: '文章数据'
     ,cols: [[
       {type: 'checkbox', fixed: 'left'}
-      ,{field:'art_id', title:'ID', width:80, fixed: 'left', unresize: true, sort: true}
+      ,{field:'art_id', title:'ID', width:80, fixed: 'left', unresize: true, sort: true,hide:true}
       ,{field:'title', title:'标题', width:120, edit: 'text'}
-      ,{field:'cat_id', title:'所属分类', width:150 }
+      ,{field:'cat_id', title:'所属分类',width:100}
       ,{field:'author', title:'作者', width:80, edit: 'text', sort: true}
       ,{field:'cover', title:'图片', width:100}
-      ,{field:'status', title:'状态',templet:(item)=>{
+      ,{field:'status', title:'状态', width:100,templet:(item)=>{
         let status = {
           "0":'未发布',
           '1':'已发布',
@@ -60,11 +67,64 @@ layui.use(['element','table'],function(){
         }
         return status[item.status]
       }}
-      ,{field:'publish_date', title:'发布时间', width:80, sort: true}
-      ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:150}
+      ,{field:'publish_date', title:'发布时间',  sort: true}
+      ,{fixed: 'right', title:'操作', toolbar: '#barDemo'}
     ]]
     ,page: true
   });
+  // 事件监听
+  table.on('tool(test)', function(obj){
+  let {data,event} = obj;
+  let {art_id} =data;
+
+  switch(event){
+   case 'del':
+  //  调用删除文章函数
+   del(art_id)
+   break;
+   case 'edit':
+     edit(art_id)
+     break;
+   case 'add':
+     add(art_id)
+    break
+  };
+});
 })
+// 删除文章
+function del(art_id){
+
+  layer.confirm('确认删除吗？',{
+    btn:['确定','取消']
+  },function(){
+    // 发送ajax请求
+    $.ajax({
+      type:'post',
+      url:'/deleteArticle',
+      data:{art_id}
+    }).then(res=>{
+      let {errcode,message} = res;
+      // 删除成功关闭弹框
+      layer.closeAll();
+      if(errcode == 0){
+        location.reload();//重加载数据
+        layer.msg(message);
+      }
+    })
+  })
+}
+// 跳转到文章编辑页面
+function edit(art_id){
+  location.href = `/artedit?art_id=${art_id}`
+}
+// 跳转到文章添加页面
+function add(art_id){
+  location.href = `/addarticle?art_id=${art_id}`
+}
+// 添加页面
+$('#add').on('click',function(){
+  location.href = '/addarticle '
+})
+  
 </script>
 </html>
