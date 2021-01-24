@@ -1,6 +1,9 @@
 const express = require("express");
 // 得到一个路由器
 let router = express.Router();
+const multer = require('multer');
+// 定义上传的目录
+let upload = multer({ dest: 'uploads/' })
 
 const catecontroller = require('../controller/catecontroller.js')
 const articleController = require('../controller/articleController.js')
@@ -54,5 +57,9 @@ router.get("/artedit",articleController.artedit)
 //添加文章
 router.get("/addarticle",articleController.addarticle)
 router.post("/postArticle",articleController.postArticle)
-
+// 上传文件
+router.post('/upload',upload.single('file'),articleController.upload)
+router.post("/upstatus",articleController.upstatus)
+// 获取单挑文章
+router.get('/getOnearticle',articleController.getOnearticle)
 module.exports = router;
