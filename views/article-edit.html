@@ -61,8 +61,8 @@
           </div>
 
             
-            <div class="layui-form-item">
-              <label class="layui-form-label">状态</label>
+            <div class="layui-form-item"style="margin-top:60px">
+              <label class="layui-form-label" >状态</label>
               <div class="layui-input-block">
                 <input type="radio" name="status" value="0" title="未发布" checked>
                 <input type="radio" name="status" value="1" title="发布" >
@@ -141,7 +141,10 @@ layui.use(['element','form','layer','upload'], function(){
     let formData = data.field;
     //获取编辑器内容
     formData.content = editor.txt.html(); 
-    $.post('/postArticle',formData,({errcode,message})=>{
+    formData.art_id = art_id;
+  
+    // 发送ajax请求，入库编辑数据
+    $.post('/updArticle',formData,({errcode,message})=>{
         if(errcode == 0){
             location.href = '/artindex'
         }

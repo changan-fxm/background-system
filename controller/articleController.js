@@ -102,4 +102,19 @@ articleController.getOnearticle = async(req,res)=>{
     res.json(data[0] || {})
 
 }
+// 编辑文章数据入库
+articleController.updArticle = async(req,res)=>{
+    // 还未实现删除原图功能
+    // 接收数据
+    let {cover,title,cat_id,art_id,content,status} = req.body;
+    // 执行sql
+    let sql = `update article set cover = '${cover}',cat_id = '${cat_id}',
+     title = '${title}',content = '${content}',status = '${status}' where art_id = ${art_id}`
+     let result = await model(sql);
+     if(result.affectedRows){
+         res.json(updsuccess)
+     }else{
+         res.json( updfail)
+     }
+}
 module.exports = articleController ;

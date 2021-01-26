@@ -62,4 +62,6 @@ router.post('/upload',upload.single('file'),articleController.upload)
 router.post("/upstatus",articleController.upstatus)
 // 获取单挑文章
 router.get('/getOnearticle',articleController.getOnearticle)
+// 编辑文章的数据接口
+router.post('/updArticle',articleController.updArticle)
 module.exports = router;
