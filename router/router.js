@@ -91,6 +91,7 @@ router.post('/updArticle',articleController.updArticle)
 
 // 登录
 router.post('/signUser',userController.signUser)
+
 // 用户退出
 router.get('/logout',(req,res)=>{
     // 清空session并重定向到登录页面
@@ -99,6 +100,8 @@ router.get('/logout',(req,res)=>{
     })
     res.json({message:'退出成功'})
 })
+//更新用户头像
+router.post('/updateImg',userController.updateImg)
 // 统计文章的总数
 router.get('/cateCount',async(req,res)=>{
     let sql = `select count(*) total,t2.name,t1.cat_id from article t1 left join category t2
