@@ -1,34 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="/public/layui/css/layui.css">
-   
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="/public/layui/css/layui.css">
+
 </head>
+
 <body>
   <div class="layui-layout layui-layout-admin">
-    {{ include './common/header.html' }}
-  
-   {{ include './common/slide.html' }}
-   <div class="layui-body">
-     <!-- 内容主体区域 -->
-     <div style="padding: 15px;">内容主体区域</div>
-   </div>
- {{ include './common/footer.html' }}
-   
-  
- </div>
-</body>
-<script src="/public/layui/layui.js"></script>
-<script>
-    //注意：导航 依赖 element 模块，否则无法进行功能性操作
-    layui.use('element', function(){
-      var element = layui.element;
-      
-      //…
-    });
-    </script>
-</html>
+    {{ include './common/header.html'}}
 
+    {{ include './common/slide.html' }}
+    <div class="layui-body">
+      <!-- 内容主体区域 -->
+      <h4  style="padding: 15px;" id="last_login_date"></h4>
+      <div style="padding: 15px;display:flex" >
+        <div id="main" style="width: 600px;height:400px;"></div>
+        
+        <div id="article" style="width: 600px;height:400px;"></div>
+
+      </div>
+    </div>
+    {{ include './common/footer.html' }}
+
+
+  </div>
+</body>
+<script src="/public/layui/layui.all.js"></script>
+<script src="/public/js/moment.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+<script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js"></script>
+<script src="/public/js/util.js"></script>
+<script type="text/javascript">
+// 获取分类统计的数据
+ $.get('/cateCount',(res)=>{
+   let names = [];
+   let total = [];
+   res.map(v=>{
+     names.push(v.name);
+     total.push(v.total)
+   })
+   let table = document.getElementById('main')
+   let title = '分类文章统计表';
+ 
+   //  初始化图表
+   loadEchart(table,names,total,title);
+
+   console.log(res);
+   
+ })
+ // 获取每月文章统计的数据
+ $.get('/artCount',(res)=>{
+   let months = [];
+   let total = [];
+   res.map(v=>{
+    months.push(v.month);
+     total.push(v.total)
+   })
+   let table = document.getElementById('article')
+   let title = '每月文章统计表';
+ 
+   //  初始化图表
+   loadEchart(table,months,total,title);
+
+   console.log(res);
+   
+ })
+
+// 加载表
+  function loadEchart(table,names,total,title) {
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(table);
+
+    // 指定图表的配置项和数据
+    var option = {
+      title: {
+        text: '文章管理系统统计表',
+        subtext:'单位，篇数'
+      },
+      tooltip: {},
+      legend: {
+        data: ['销量']
+      },
+      xAxis: {
+        data: names
+      },
+      yAxis: {},
+      series: [{
+        name: '销量',
+        type: 'bar',
+        data: total,
+        // type:'line'
+        label:{
+          show:true,
+          fontSize:18
+
+        }
+      }]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+  }
+
+
+   // 显示用户的信息
+   let userInfo =  JSON.parse(localStorage.getItem('userInfo') || '{}');
+  let last_login_date = util.date_format(userInfo.last_login_date)
+  let str = `上一次登录时间为：${last_login_date}`;
+  $("#last_login_date").html(str)
+ 
+  //注意：导航 依赖 element 模块，否则无法进行功能性操作
+  layui.use('element', function () {
+    var element = layui.element;
+
+    //…
+  });
+  
+ 
+</script>
+
+</html>

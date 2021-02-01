@@ -1,4 +1,5 @@
 const express = require("express");
+const model = require('../model/model.js');
 // 得到一个路由器
 let router = express.Router();
 const multer = require('multer');
@@ -7,11 +8,18 @@ let upload = multer({ dest: 'uploads/' })
 
 const catecontroller = require('../controller/catecontroller.js')
 const articleController = require('../controller/articleController.js')
+const userController = require('../controller/userController.js')
 
 router.get('/',(req,res)=>{
+    
+   
     res.render('back-stage.html')
 })
 router.get('/back-stage',(req,res)=>{
+    console.log(req.session.userInfo);
+    let data = {
+        userInfo:req.session.userInfo
+    } 
     res.render('back-stage.html')
 })
 router.get('/cate-list',(req,res)=>{
@@ -24,7 +32,23 @@ router.get('/article',(req,res)=>{
 router.get('/artindex',(req,res)=>{
     res.render('article.html')
 })
-
+// 登录页面
+router.get('/login',(req,res)=>{
+    if(req.session.userInfo){
+        res.render('back-stage.html')
+        return;
+    }
+    res.render('login.html')
+})
+// 退出登录
+router.get('/logout',(req,res)=>{
+    req.session.destroy(err=>{
+        if(err){
+            throw err;
+        }
+    })
+    res.redirect("/login")
+})
 // 渲染后台分类列表页面
 router.get('/catindex',catecontroller.catindex)
 
@@ -64,4 +88,29 @@ router.post("/upstatus",articleController.upstatus)
 router.get('/getOnearticle',articleController.getOnearticle)
 // 编辑文章的数据接口
 router.post('/updArticle',articleController.updArticle)
+
+// 登录
+router.post('/signUser',userController.signUser)
+// 用户退出
+router.get('/logout',(req,res)=>{
+    // 清空session并重定向到登录页面
+    req.session.destroy(err=>{
+        if(err){ throw err; }
+    })
+    res.json({message:'退出成功'})
+})
+// 统计文章的总数
+router.get('/cateCount',async(req,res)=>{
+    let sql = `select count(*) total,t2.name,t1.cat_id from article t1 left join category t2
+    on t1.cat_id = t2.cat_id group by t1.cat_id`;
+    let data = await model(sql);
+    res.json(data)
+})
+// 统计当前文章的总数
+router.get('/artCount',async(req,res)=>{
+    let sql = `select month(publish_date) month,count(*) total from article
+    where year(publish_date) = year(now()) group by month(publish_date)`;
+    let result = await model(sql);
+    res.json(result)
+})
 module.exports = router;

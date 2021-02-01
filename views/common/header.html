@@ -14,14 +14,104 @@
   <ul class="layui-nav layui-layout-right">
     <li class="layui-nav-item">
       <a href="javascript:;">
-        <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
-        贤心
+        <img src="" class="layui-nav-img" id="avatar">
+      <span id="username">匿名</span>
       </a>
       <dl class="layui-nav-child">
-        <dd><a href="">基本资料</a></dd>
-        <dd><a href="">安全设置</a></dd>
+        <dd ><a href="" >基本资料</a></dd>
+        <dd ><a href="">安全设置</a></dd>
+       
       </dl>
     </li>
-    <li class="layui-nav-item"><a href="">退出</a></li>
+    <li class="layui-nav-item"><a id="logout" href="javascript:;">退出系统</a></li>
+    <li class="layui-nav-item" id="fit">修改资料</a>
+      
+    </li>
   </ul>
 </ul>
+<script src="/public/layui/layui.all.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+<script>
+  document.getElementById('fit').onclick = function fit(){
+   //页面层
+
+    layer.open({
+      type: 1,
+      skin: 'layui-layer-rim', //加上边框
+      area: ['660px', '440px'], //宽高
+     
+      content: `
+    <form class="layui-form" action="">
+          <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+              <div class="layui-input-block">
+                头像  <img src="" alt="" id="cover-preview">
+              </div>
+          </div> 
+          <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+              <div class="layui-input-block">
+                <button type="button" class="layui-btn" id="cover_img_uploap">
+                  <i class="layui-icon">&#xe67c;</i>上传头像
+                </button>  
+              </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">用户名</label>
+            <div class="layui-input-block">
+              <input type="text" name="title" required  lay-verify="required" placeholder="请输入账号" autocomplete="off" class="layui-input">
+           
+            </div>
+          </div>
+          // <div class="layui-form-item">
+          //   <label class="layui-form-label">昵称</label>
+          //   <div class="layui-input-block">
+          //     <input type="text" name="title" required  lay-verify="required" placeholder="请输入昵称" autocomplete="off" class="layui-input">
+          //   </div>
+          // </div>
+
+        
+          <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">签名</label>
+            <div class="layui-input-block">
+              <textarea name="desc" placeholder="请输入内容" class="layui-textarea"></textarea>
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <div class="layui-input-block">
+              <button class="layui-btn" lay-submit lay-filter="formDemo" onclick = "submit()">立即提交</button>
+              <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+          </div>
+        </form>`,
+//         success:function(){
+         
+       
+// }
+    });
+
+    }
+
+
+  window.onload = function(){
+ let userInfo =  JSON.parse(localStorage.getItem('userInfo') || '{}');
+        let avatar = userInfo.avatar || '/public/images/default.jpg'; 
+
+        document.getElementById('username').innerHTML = userInfo.username;
+        document.getElementById('avatar').src= userInfo.avatar;
+
+     // 退出
+     document.getElementById('logout').onclick = function(){
+          // 清空session(需要发送ajax请求)
+          $.get('/logout',(res)=>{
+            // 清空本地存储
+            localStorage.clear();
+            layer.msg(res.message)
+            location.href = '/login'
+          })
+          console.log('退出');
+        }
+        
+        
+  }
+</script>

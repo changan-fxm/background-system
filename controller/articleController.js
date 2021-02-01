@@ -52,8 +52,9 @@ articleController.addarticle = (req,res)=>{
 //提交数据入库
 articleController.postArticle = async(req,res)=>{
     let {title,cat_id,status,content,cover} = req.body;
+    let username = req.session.userInfo.username;
     let sql = `insert into article(title,content,cat_id,status,cover,publish_date)
-                values('${title}','${content}',${cat_id},${status},'${cover}',now())
+                values('${title}','${content}','${username}',${cat_id},${status},'${cover}',now())
                 `;
     let result = await model (sql)
     if(result.affectedRows){
