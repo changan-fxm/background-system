@@ -3,7 +3,20 @@ const app = express();
 const path = require('path');
 let session = require('express-session');
 
+let cors = require('cors');
+
+app.use(cors())
+
+// app.use('/api',function(request,response,next){
+//     response.setHeader('Access-Control-Allow-Origin','*')
+//     next()  
+// })
+
+// 导入路由
 const router = require('./router/router.js')
+// 前台路由
+const frontRouter = require('./router/frontRouter.js')
+
 
 const artTemplate = require('art-template'); 
 const express_template = require('express-art-template');
@@ -24,6 +37,8 @@ app.engine('html', express_template);
 
 //使用模板引擎扩展名为html
 app.set('view engine', 'html');
+
+app.use('/api',frontRouter)
 
 // 初始化session,定义session一些配置
 let options = {
@@ -59,8 +74,10 @@ app.use( session(options) )
 // })
 
 
-
+// 使用路由
 app.use(router)
+
+
 app.listen(5000,()=>{
     console.log('server is running at port 5000');
     
